@@ -1,0 +1,205 @@
+package services;
+
+import database.DatabaseManager;
+import java.sql.*;
+
+public class TransactionService {
+    private DatabaseManager dbManager;
+
+    public TransactionService(DatabaseManager dbManager) {
+        this.dbManager = dbManager;
+    }
+
+    // Wallet-to-Wallet Transaction
+    public void createWalletToWalletTransaction(int fromUserId, int toUserId, double amount) {
+        // Check if both users are registered
+        if (!isUserRegistered(fromUserId)) {
+            System.out.println("Error: Source user is not registered.");
+            return;
+        }
+        if (!isUserRegistered(toUserId)) {
+            System.out.println("Error: Recipient user is not registered.");
+            return;
+        }
+
+        // Check if the source user has enough balance
+        double fromUserBalance = getWalletBalance(fromUserId);
+        if (fromUserBalance < amount) {
+            System.out.println("Error: Insufficient balance in the source wallet.");
+            return;
+        }
+
+        // Deduct amount from the source user's wallet
+        deductFromWallet(fromUserId, amount);
+
+        // Add amount to the recipient's wallet
+        addToWallet(toUserId, amount);
+
+        // Log the transaction
+        logTransaction(fromUserId, toUserId, amount, "WALLET_TO_WALLET", "COMPLETED");
+
+        System.out.println("Wallet-to-Wallet transaction completed successfully.");
+    }
+
+    // Wallet-to-Bank Transaction
+    public void createWalletToBankTransaction(int fromUserId, String accountNumber, String ifscCode, double amount) {
+        // Check if the source user is registered
+        if (!isUserRegistered(fromUserId)) {
+            System.out.println("Error: Source user is not registered.");
+            return;
+        }
+
+        // Check if the source user has enough balance
+        double fromUserBalance = getWalletBalance(fromUserId);
+        if (fromUserBalance < amount) {
+            System.out.println("Error: Insufficient balance in the source wallet.");
+            return;
+        }
+
+        // Deduct amount from the source user's wallet
+        deductFromWallet(fromUserId, amount);
+
+        // Log the transaction
+        logTransaction(fromUserId, -1, amount, "WALLET_TO_BANK", "COMPLETED", accountNumber, ifscCode);
+
+        System.out.println("Wallet-to-Bank transaction completed successfully.");
+    }
+
+    // Check if a user is registered
+    private boolean isUserRegistered(int userId) {
+        String query = "SELECT userId FROM Users WHERE userId = ?";
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement(query)) {
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+            return rs.next(); // Returns true if the user exists
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Get wallet balance for a user
+    private double getWalletBalance(int userId) {
+        String query = "SELECT balance FROM Users WHERE userId = ?";
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement(query)) {
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("balance");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    // Deduct amount from a user's wallet
+    private void deductFromWallet(int userId, double amount) {
+        String query = "UPDATE Users SET balance = balance - ? WHERE userId = ?";
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement(query)) {
+            statement.setDouble(1, amount);
+            statement.setInt(2, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Add amount to a user's wallet
+    private void addToWallet(int userId, double amount) {
+        String query = "UPDATE Users SET balance = balance + ? WHERE userId = ?";
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement(query)) {
+            statement.setDouble(1, amount);
+            statement.setInt(2, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Log the transaction (for wallet-to-wallet)
+    private void logTransaction(int fromUserId, int toUserId, double amount, String type, String status) {
+        String query = "INSERT INTO Transactions (fromUserId, toUserId, amount, type, status) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement(query)) {
+            statement.setInt(1, fromUserId);
+            statement.setInt(2, toUserId);
+            statement.setDouble(3, amount);
+            statement.setString(4, type);
+            statement.setString(5, status);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Log the transaction (for wallet-to-bank)
+    private void logTransaction(int fromUserId, int toUserId, double amount, String type, String status,
+            String accountNumber, String ifscCode) {
+        String query = "INSERT INTO Transactions (fromUserId, toUserId, amount, type, status, accountNumber, ifscCode) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement(query)) {
+            statement.setInt(1, fromUserId);
+            statement.setInt(2, toUserId);
+            statement.setDouble(3, amount);
+            statement.setString(4, type);
+            statement.setString(5, status);
+            statement.setString(6, accountNumber);
+            statement.setString(7, ifscCode);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Create a card/UPI/netbanking to another user transaction
+    public void createCardUpiNetbankingToUserTransaction(int fromUserId, int toUserId, double amount,
+            String paymentMethod, String paymentDetails) {
+        String query = "INSERT INTO Transactions (fromUserId, toUserId, amount, type, status, paymentMethod, paymentDetails) VALUES (?, ?, ?, ?, 'PENDING', ?, ?)";
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement(query)) {
+            statement.setInt(1, fromUserId);
+            statement.setInt(2, toUserId);
+            statement.setDouble(3, amount);
+            statement.setString(4, paymentMethod);
+            statement.setString(5, paymentDetails);
+            statement.executeUpdate();
+            System.out.println("Transaction created via " + paymentMethod);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Create a bank-to-bank transaction
+    public void createBankToBankTransaction(int fromUserId, String fromAccountNumber, String fromIfscCode,
+            String toAccountNumber, String toIfscCode, double amount) {
+        String query = "INSERT INTO Transactions (fromUserId, accountNumber, ifscCode, toAccountNumber, toIfscCode, amount, type, status) VALUES (?, ?, ?, ?, ?, ?, 'BANK_TO_BANK', 'PENDING')";
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement(query)) {
+            statement.setInt(1, fromUserId);
+            statement.setString(2, fromAccountNumber);
+            statement.setString(3, fromIfscCode);
+            statement.setString(4, toAccountNumber);
+            statement.setString(5, toIfscCode);
+            statement.setDouble(6, amount);
+            statement.executeUpdate();
+            System.out.println("Bank-to-Bank transaction created.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // View transaction history for a user
+    public void viewTransactionsHistory(int userId) {
+        String query = "SELECT * FROM Transactions WHERE fromUserId = ? OR toUserId = ?";
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement(query)) {
+            statement.setInt(1, userId);
+            statement.setInt(2, userId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                System.out.println("Transaction ID: " + rs.getInt("transactionId") +
+                        ", Amount: " + rs.getDouble("amount") +
+                        ", Type: " + rs.getString("type") +
+                        ", Status: " + rs.getString("status"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
