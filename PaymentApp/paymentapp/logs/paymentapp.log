@@ -1,0 +1,62 @@
+2025-02-21 14:07:02 INFO  DatabaseManager:23 - Connected to the database.
+2025-02-21 14:07:02 INFO  App:30 - 
+===== Payment App Menu =====
+2025-02-21 14:07:02 INFO  App:31 - 1. Register User
+2025-02-21 14:07:02 INFO  App:32 - 2. Login
+2025-02-21 14:07:02 INFO  App:33 - 3. Exit
+2025-02-21 14:07:02 INFO  App:34 - Choose an option: 
+2025-02-21 14:07:16 INFO  App:50 - Enter phone number: 
+2025-02-21 14:07:20 INFO  App:52 - Enter password: 
+2025-02-21 14:07:23 INFO  UserService:48 - Login successful. User ID: 2
+2025-02-21 14:07:23 INFO  App:69 - 
+===== Welcome to Command Line Payment Application =====
+2025-02-21 14:07:23 INFO  App:70 - 1. Update Profile
+2025-02-21 14:07:23 INFO  App:71 - 2. Check Wallet balance
+2025-02-21 14:07:23 INFO  App:72 - 3. Add Money to Wallet
+2025-02-21 14:07:23 INFO  App:73 - 4. Make Payment
+2025-02-21 14:07:23 INFO  App:74 - 5. Refund Transaction
+2025-02-21 14:07:23 INFO  App:75 - 6. View Transaction History
+2025-02-21 14:07:23 INFO  App:76 - 7. Logout
+2025-02-21 14:07:23 INFO  App:77 - Choose an option: 
+2025-02-21 14:07:27 DEBUG WalletService:80 - Wallet balance retrieved successfully for user ID 2. Balance: 1000.0
+2025-02-21 14:07:27 INFO  App:96 - Your wallet balance is: 1000.0
+2025-02-21 14:07:27 INFO  App:69 - 
+===== Welcome to Command Line Payment Application =====
+2025-02-21 14:07:27 INFO  App:70 - 1. Update Profile
+2025-02-21 14:07:27 INFO  App:71 - 2. Check Wallet balance
+2025-02-21 14:07:27 INFO  App:72 - 3. Add Money to Wallet
+2025-02-21 14:07:27 INFO  App:73 - 4. Make Payment
+2025-02-21 14:07:27 INFO  App:74 - 5. Refund Transaction
+2025-02-21 14:07:27 INFO  App:75 - 6. View Transaction History
+2025-02-21 14:07:27 INFO  App:76 - 7. Logout
+2025-02-21 14:07:27 INFO  App:77 - Choose an option: 
+2025-02-21 14:08:00 INFO  App:84 - Enter name: 
+2025-02-21 14:08:03 INFO  App:86 - Enter email: 
+2025-02-21 14:08:08 INFO  App:88 - Enter phone number: 
+2025-02-21 14:08:12 INFO  UserService:70 - User updated
+2025-02-21 14:08:12 INFO  App:69 - 
+===== Welcome to Command Line Payment Application =====
+2025-02-21 14:08:12 INFO  App:70 - 1. Update Profile
+2025-02-21 14:08:12 INFO  App:71 - 2. Check Wallet balance
+2025-02-21 14:08:12 INFO  App:72 - 3. Add Money to Wallet
+2025-02-21 14:08:12 INFO  App:73 - 4. Make Payment
+2025-02-21 14:08:12 INFO  App:74 - 5. Refund Transaction
+2025-02-21 14:08:12 INFO  App:75 - 6. View Transaction History
+2025-02-21 14:08:12 INFO  App:76 - 7. Logout
+2025-02-21 14:08:12 INFO  App:77 - Choose an option: 
+2025-02-21 14:08:24 INFO  UserService:87 - Logged out successfully.
+2025-02-21 14:08:24 INFO  App:30 - 
+===== Payment App Menu =====
+2025-02-21 14:08:24 INFO  App:31 - 1. Register User
+2025-02-21 14:08:24 INFO  App:32 - 2. Login
+2025-02-21 14:08:24 INFO  App:33 - 3. Exit
+2025-02-21 14:08:24 INFO  App:34 - Choose an option: 
+2025-02-21 14:08:26 INFO  App:59 - Exiting the application. Goodbye!
+2025-02-21 14:08:26 INFO  DatabaseManager:39 - Database connection closed.
+2025-02-21 19:38:08 INFO  DatabaseManager:23 - Connected to the database.
+2025-02-21 19:38:08 INFO  App:30 - 
+===== Payment App Menu =====
+2025-02-21 19:38:08 INFO  App:31 - 1. Register User
+2025-02-21 19:38:08 INFO  App:32 - 2. Login
+2025-02-21 19:38:08 INFO  App:33 - 3. Exit
+2025-02-21 19:38:08 INFO  App:34 - Choose an option: 
